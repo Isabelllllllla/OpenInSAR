@@ -1,0 +1,494 @@
+data1 = read.csv('201901.csv')
+data1 = data1[-1,]
+data2 = read.csv('201902.csv')
+data3 = read.csv('201903.csv')
+data4 = read.csv('201904.csv')
+data5 = read.csv('201905.csv')
+data6 = read.csv('201906.csv')
+data7 = read.csv('201907.csv')
+data8 = read.csv('201908.csv')
+data9 = read.csv('201909.csv')
+data10 = read.csv('201910.csv')
+data11 = read.csv('201911.csv')
+data12 = read.csv('201912.csv')
+data13 = read.csv('202001.csv')
+data14 = read.csv('202002.csv')
+data15 = read.csv('202003.csv')
+data16 = read.csv('202004.csv')
+data17 = read.csv('202005.csv')
+data18 = read.csv('202006.csv')
+data19 = read.csv('202007.csv')
+data20 = read.csv('202008.csv')
+data21 = read.csv('202009.csv')
+data22 = read.csv('202010.csv')
+data23 = read.csv('202011.csv')
+data24 = read.csv('202012.csv')
+data25 = read.csv('202101.csv')
+data26 = read.csv('202102.csv')
+data27 = read.csv('202103.csv')
+data28 = read.csv('202104.csv')
+data29 = read.csv('202105.csv')
+data30 = read.csv('202106.csv')
+data31 = read.csv('202107.csv')
+data32 = read.csv('202108.csv')
+data33 = read.csv('202109.csv')
+data34 = read.csv('202110.csv')
+data35 = read.csv('202111.csv')
+data36 = read.csv('202112.csv')
+
+
+##1-----------------------------------------------------------------------------------------------
+df2019 = data.frame(month = c(rep(1,(length(data1$NDVI))),
+                              rep(2,(length(data2$NDVI))),
+                              rep(3,(length(data3$NDVI))),
+                              rep(4,(length(data4$NDVI))),
+                              rep(5,(length(data5$NDVI))),
+                              rep(6,(length(data6$NDVI))),
+                              rep(7,(length(data7$NDVI))),
+                              rep(8,(length(data8$NDVI))),
+                              rep(9,(length(data9$NDVI))),
+                              rep(10,(length(data10$NDVI))),
+                              rep(11,(length(data11$NDVI))),
+                              rep(12,(length(data12$NDVI)))),
+                    NDVI = c(data1$NDVI,data2$NDVI,data3$NDVI,data4$NDVI,
+                             data5$NDVI,data6$NDVI,data7$NDVI,data8$NDVI,
+                             data9$NDVI,data10$NDVI,data11$NDVI,data12$NDVI))
+names(df2019) = c('month','NDVI')
+df2020 = data.frame(month = c(rep(1,(length(data13$NDVI))),
+                              rep(2,(length(data14$NDVI))),
+                              rep(3,(length(data15$NDVI))),
+                              rep(4,(length(data16$NDVI))),
+                              rep(5,(length(data17$NDVI))),
+                              rep(6,(length(data18$NDVI))),
+                              rep(7,(length(data19$NDVI))),
+                              rep(8,(length(data20$NDVI))),
+                              rep(9,(length(data21$NDVI))),
+                              rep(10,(length(data22$NDVI))),
+                              rep(11,(length(data23$NDVI))),
+                              rep(12,(length(data24$NDVI)))),
+                    NDVI = c(data13$NDVI,data14$NDVI,data15$NDVI,data16$NDVI,
+                             data17$NDVI,data18$NDVI,data19$NDVI,data20$NDVI,
+                             data21$NDVI,data22$NDVI,data23$NDVI,data24$NDVI))
+names(df2020) = c('month','NDVI')
+df2021 = data.frame(month = c(rep(1,(length(data25$NDVI))),
+                              rep(2,(length(data26$NDVI))),
+                              rep(3,(length(data27$NDVI))),
+                              rep(4,(length(data28$NDVI))),
+                              rep(5,(length(data29$NDVI))),
+                              rep(6,(length(data30$NDVI))),
+                              rep(7,(length(data31$NDVI))),
+                              rep(8,(length(data32$NDVI))),
+                              rep(9,(length(data33$NDVI))),
+                              rep(10,(length(data34$NDVI))),
+                              rep(11,(length(data35$NDVI))),
+                              rep(12,(length(data36$NDVI)))),
+                    NDVI = c(data25$NDVI,data26$NDVI,data27$NDVI,data28$NDVI,
+                             data29$NDVI,data30$NDVI,data31$NDVI,data32$NDVI,
+                             data33$NDVI,data34$NDVI,data35$NDVI,data36$NDVI))
+names(df2021) = c('month','NDVI')
+
+df2019 = na.omit(df2019)
+df2020 = na.omit(df2020)
+df2021 = na.omit(df2021)
+
+nrow(df2019)
+nrow(df2020)
+nrow(df2021)
+
+dftotal = rbind(df2019,df2020,df2021)
+dftotal$NDVI = as.numeric(dftotal$NDVI)
+mean1 = aggregate(NDVI ~ month,data = dftotal,mean)
+mean1$month2 = (mean1$month)^2
+reg = lm(NDVI~month+month2,data = mean1)
+mean1$expect = reg$coefficients[1]+reg$coefficients[2]*mean1$month+reg$coefficients[3]*mean1$month2
+
+
+plot(df2019$month,df2019$NDVI,type = 'p',ylim = c(-1,1),xlab = 'month',ylab = 'NDVI',main = 'Scatter Diagram of Corn Data',yaxt = 'n',col = 'green')
+points(df2020$month,df2020$NDVI,col = 'red')
+points(df2021$month,df2021$NDVI,col = 'blue')
+lines(mean1$month,mean1$NDVI,col = 'black')
+lines(mean1$month,mean1$expect,col = 'orange')
+axis(1,1:12)
+axis(2,seq(-1,1,0.1),las = 1)
+text(8,0.9,'y = -0.289 + 0.175x - 0.012x^2')
+legend('bottomleft',legend = c('2019','2020','2021','mean','quadratic fit'),
+       col = c("green","red",'blue','black','orange'),lty = 1,cex = 0.8)
+
+##2-----------------------------------------------------------------------------------------------
+df2 = data.frame(month = c(rep(1,(length(data1$GNDVI)+length(data13$GNDVI)+length(data25$GNDVI))),
+                           rep(2,(length(data2$GNDVI)+length(data14$GNDVI)+length(data26$GNDVI))),
+                           rep(3,(length(data3$GNDVI)+length(data15$GNDVI)+length(data27$GNDVI))),
+                           rep(4,(length(data4$GNDVI)+length(data16$GNDVI)+length(data28$GNDVI))),
+                           rep(5,(length(data5$GNDVI)+length(data17$GNDVI)+length(data29$GNDVI))),
+                           rep(6,(length(data6$GNDVI)+length(data18$GNDVI)+length(data30$GNDVI))),
+                           rep(7,(length(data7$GNDVI)+length(data19$GNDVI)+length(data31$GNDVI))),
+                           rep(8,(length(data8$GNDVI)+length(data20$GNDVI)+length(data32$GNDVI))),
+                           rep(9,(length(data9$GNDVI)+length(data21$GNDVI)+length(data33$GNDVI))),
+                           rep(10,(length(data10$GNDVI)+length(data22$GNDVI)+length(data34$GNDVI))),
+                           rep(11,(length(data11$GNDVI)+length(data23$GNDVI)+length(data35$GNDVI))),
+                           rep(12,(length(data12$GNDVI)+length(data24$GNDVI)+length(data36$GNDVI)))
+),
+GNDVI = c(data1$GNDVI,data13$GNDVI,data25$GNDVI,
+          data2$GNDVI,data14$GNDVI,data26$GNDVI,
+          data3$GNDVI,data15$GNDVI,data27$GNDVI,
+          data4$GNDVI,data16$GNDVI,data28$GNDVI,
+          data5$GNDVI,data17$GNDVI,data29$GNDVI,
+          data6$GNDVI,data18$GNDVI,data30$GNDVI,
+          data7$GNDVI,data19$GNDVI,data31$GNDVI,
+          data8$GNDVI,data20$GNDVI,data32$GNDVI,
+          data9$GNDVI,data21$GNDVI,data33$GNDVI,
+          data10$GNDVI,data22$GNDVI,data34$GNDVI,
+          data11$GNDVI,data23$GNDVI,data35$GNDVI,
+          data12$GNDVI,data24$GNDVI,data36$GNDVI))
+names(df2) = c('month','GNDVI')
+df2 = df2[-1,]
+
+
+df2$month = as.integer(df2$month)
+
+nrow(df2)
+
+
+
+df2019G = data.frame(month = c(rep(1,(length(data1$GNDVI))),
+                              rep(2,(length(data2$GNDVI))),
+                              rep(3,(length(data3$GNDVI))),
+                              rep(4,(length(data4$GNDVI))),
+                              rep(5,(length(data5$GNDVI))),
+                              rep(6,(length(data6$GNDVI))),
+                              rep(7,(length(data7$GNDVI))),
+                              rep(8,(length(data8$GNDVI))),
+                              rep(9,(length(data9$GNDVI))),
+                              rep(10,(length(data10$GNDVI))),
+                              rep(11,(length(data11$GNDVI))),
+                              rep(12,(length(data12$GNDVI)))),
+                    GNDVI = c(data1$GNDVI,data2$GNDVI,data3$GNDVI,data4$GNDVI,
+                             data5$GNDVI,data6$GNDVI,data7$GNDVI,data8$GNDVI,
+                             data9$GNDVI,data10$GNDVI,data11$GNDVI,data12$GNDVI))
+names(df2019G) = c('month','GNDVI')
+df2020G = data.frame(month = c(rep(1,(length(data13$GNDVI))),
+                              rep(2,(length(data14$GNDVI))),
+                              rep(3,(length(data15$GNDVI))),
+                              rep(4,(length(data16$GNDVI))),
+                              rep(5,(length(data17$GNDVI))),
+                              rep(6,(length(data18$GNDVI))),
+                              rep(7,(length(data19$GNDVI))),
+                              rep(8,(length(data20$GNDVI))),
+                              rep(9,(length(data21$GNDVI))),
+                              rep(10,(length(data22$GNDVI))),
+                              rep(11,(length(data23$GNDVI))),
+                              rep(12,(length(data24$GNDVI)))),
+                    GNDVI = c(data13$GNDVI,data14$GNDVI,data15$GNDVI,data16$GNDVI,
+                             data17$GNDVI,data18$GNDVI,data19$GNDVI,data20$GNDVI,
+                             data21$GNDVI,data22$GNDVI,data23$GNDVI,data24$GNDVI))
+names(df2020G) = c('month','GNDVI')
+df2021G = data.frame(month = c(rep(1,(length(data25$GNDVI))),
+                              rep(2,(length(data26$GNDVI))),
+                              rep(3,(length(data27$GNDVI))),
+                              rep(4,(length(data28$GNDVI))),
+                              rep(5,(length(data29$GNDVI))),
+                              rep(6,(length(data30$GNDVI))),
+                              rep(7,(length(data31$GNDVI))),
+                              rep(8,(length(data32$GNDVI))),
+                              rep(9,(length(data33$GNDVI))),
+                              rep(10,(length(data34$GNDVI))),
+                              rep(11,(length(data35$GNDVI))),
+                              rep(12,(length(data36$GNDVI)))),
+                    GNDVI = c(data25$GNDVI,data26$GNDVI,data27$GNDVI,data28$GNDVI,
+                             data29$GNDVI,data30$GNDVI,data31$GNDVI,data32$GNDVI,
+                             data33$GNDVI,data34$GNDVI,data35$GNDVI,data36$GNDVI))
+names(df2021G) = c('month','GNDVI')
+
+df2019G = na.omit(df2019G)
+df2020G = na.omit(df2020G)
+df2021G = na.omit(df2021G)
+
+nrow(df2019G)
+nrow(df2020G)
+nrow(df2021G)
+
+dftotalG = rbind(df2019G,df2020G,df2021G)
+meanG = aggregate(GNDVI~month,data = dftotalG , mean)
+meanG$month2 = (meanG$month)^2
+regG = lm(GNDVI~month+month2,data = meanG)
+meanG$expect = regG$coefficients[1]+regG$coefficients[2]*meanG$month+regG$coefficients[3]*meanG$month2
+
+
+plot(df2019G$month,df2019G$GNDVI,type = 'p',ylim = c(-1,1),xlab = 'month',ylab = 'GNDVI',main = 'Scatter Diagram of Corn Data',yaxt = 'n',col = 'green')
+points(df2020G$month,df2020G$GNDVI,col = 'red')
+points(df2021G$month,df2021G$GNDVI,col = 'blue')
+lines(meanG$month,meanG$GNDVI,col = 'black')
+lines(meanG$month,meanG$expect,col = 'orange')
+axis(1,1:12)
+axis(2,seq(-1,1,0.1),las = 1)
+text(8,0.9,'y = -0.25 + 0.152x - 0.011x^2')
+legend('bottomleft',legend = c('2019','2020','2021','mean','quadratic fit'),
+       col = c("green","red",'blue','black','orange'),lty = 1,cex = 0.8)
+
+
+##load pasture data==================================================================================================
+##??ע??һ???????²????????? ????????��??ͼ???????õ??ǲ?ͬ??workspace ?ڴ˸???ʹ??
+##???????ݱ?????workspace?ļ??? ?Ա??????????͸???
+data1 = read.csv('201901new.csv')
+data2 = read.csv('201902new.csv')
+data3 = read.csv('201903new.csv')
+data4 = read.csv('201904new.csv')
+data5 = read.csv('201905new.csv')
+data6 = read.csv('201906new.csv')
+data7 = read.csv('201907new.csv')
+data8 = read.csv('201908new.csv')
+data9 = read.csv('201909new.csv')
+data10 = read.csv('201910new.csv')
+data11 = read.csv('201911new.csv')
+data12 = read.csv('201912new.csv')
+data13 = read.csv('202001new.csv')
+data14 = read.csv('202002new.csv')
+data15 = read.csv('202003new.csv')
+data16 = read.csv('202004new.csv')
+data17 = read.csv('202005new.csv')
+data18 = read.csv('202006new.csv')
+data19 = read.csv('202007new.csv')
+data20 = read.csv('202008new.csv')
+data21 = read.csv('202009new.csv')
+data22 = read.csv('202010new.csv')
+data23 = read.csv('202011new.csv')
+data24 = read.csv('202012new.csv')
+data25 = read.csv('202101new.csv')
+data26 = read.csv('202102new.csv')
+data27 = read.csv('202103new.csv')
+data28 = read.csv('202104new.csv')
+data29 = read.csv('202105new.csv')
+data30 = read.csv('202106new.csv')
+data31 = read.csv('202107new.csv')
+data32 = read.csv('202108new.csv')
+data33 = read.csv('202109new.csv')
+data34 = read.csv('202110new.csv')
+data35 = read.csv('202111new.csv')
+data36 = read.csv('202112new.csv')
+##3-----------------------------------------------------------------------------------------------
+df2019 = data.frame(month = c(rep(1,(length(data1$NDVI))),
+                              rep(2,(length(data2$NDVI))),
+                              rep(3,(length(data3$NDVI))),
+                              rep(4,(length(data4$NDVI))),
+                              rep(5,(length(data5$NDVI))),
+                              rep(6,(length(data6$NDVI))),
+                              rep(7,(length(data7$NDVI))),
+                              rep(8,(length(data8$NDVI))),
+                              rep(9,(length(data9$NDVI))),
+                              rep(10,(length(data10$NDVI))),
+                              rep(11,(length(data11$NDVI))),
+                              rep(12,(length(data12$NDVI)))),
+                    NDVI = c(data1$NDVI,data2$NDVI,data3$NDVI,data4$NDVI,
+                             data5$NDVI,data6$NDVI,data7$NDVI,data8$NDVI,
+                             data9$NDVI,data10$NDVI,data11$NDVI,data12$NDVI))
+names(df2019) = c('month','NDVI')
+df2020 = data.frame(month = c(rep(1,(length(data13$NDVI))),
+                              rep(2,(length(data14$NDVI))),
+                              rep(3,(length(data15$NDVI))),
+                              rep(4,(length(data16$NDVI))),
+                              rep(5,(length(data17$NDVI))),
+                              rep(6,(length(data18$NDVI))),
+                              rep(7,(length(data19$NDVI))),
+                              rep(8,(length(data20$NDVI))),
+                              rep(9,(length(data21$NDVI))),
+                              rep(10,(length(data22$NDVI))),
+                              rep(11,(length(data23$NDVI))),
+                              rep(12,(length(data24$NDVI)))),
+                    NDVI = c(data13$NDVI,data14$NDVI,data15$NDVI,data16$NDVI,
+                             data17$NDVI,data18$NDVI,data19$NDVI,data20$NDVI,
+                             data21$NDVI,data22$NDVI,data23$NDVI,data24$NDVI))
+names(df2020) = c('month','NDVI')
+df2021 = data.frame(month = c(rep(1,(length(data25$NDVI))),
+                              rep(2,(length(data26$NDVI))),
+                              rep(3,(length(data27$NDVI))),
+                              rep(4,(length(data28$NDVI))),
+                              rep(5,(length(data29$NDVI))),
+                              rep(6,(length(data30$NDVI))),
+                              rep(7,(length(data31$NDVI))),
+                              rep(8,(length(data32$NDVI))),
+                              rep(9,(length(data33$NDVI))),
+                              rep(10,(length(data34$NDVI))),
+                              rep(11,(length(data35$NDVI))),
+                              rep(12,(length(data36$NDVI)))),
+                    NDVI = c(data25$NDVI,data26$NDVI,data27$NDVI,data28$NDVI,
+                             data29$NDVI,data30$NDVI,data31$NDVI,data32$NDVI,
+                             data33$NDVI,data34$NDVI,data35$NDVI,data36$NDVI))
+names(df2021) = c('month','NDVI')
+
+df2019 = na.omit(df2019)
+df2020 = na.omit(df2020)
+df2021 = na.omit(df2021)
+
+nrow(df2019)
+nrow(df2020)
+nrow(df2021)
+
+dftotal = rbind(df2019,df2020,df2021)
+mean1 = aggregate(NDVI~month,data = dftotal,mean)
+mean1$month2 = (mean1$month)^2
+reg = lm(NDVI~month+month2,data = mean1)
+mean1$expect = reg$coefficients[1]+reg$coefficients[2]*mean1$month+reg$coefficients[3]*mean1$month2
+
+
+plot(df2019$month,df2019$NDVI,type = 'p',ylim = c(-1,1),xlab = 'month',ylab = 'NDVI',main = 'Scatter Diagram of Pasture Data',yaxt = 'n',col = 'green')
+points(df2020$month,df2020$NDVI,col = 'red')
+points(df2021$month,df2021$NDVI,col = 'blue')
+lines(mean1$month,mean1$NDVI,col = 'black')
+lines(mean1$month,mean1$expect,col = 'orange')
+axis(1,1:12)
+axis(2,seq(-1,1,0.1),las = 1)
+text(8,0.9,'y = -0.3 + 0.192x - 0.014x^2')
+legend('bottomleft',legend = c('2019','2020','2021','mean','quadratic fit'),
+       col = c("green","red",'blue','black','orange'),lty = 1,cex = 0.8)
+
+
+##4-----------------------------------------------------------------------------------------------
+df2019G = data.frame(month = c(rep(1,(length(data1$GNDVI))),
+                               rep(2,(length(data2$GNDVI))),
+                               rep(3,(length(data3$GNDVI))),
+                               rep(4,(length(data4$GNDVI))),
+                               rep(5,(length(data5$GNDVI))),
+                               rep(6,(length(data6$GNDVI))),
+                               rep(7,(length(data7$GNDVI))),
+                               rep(8,(length(data8$GNDVI))),
+                               rep(9,(length(data9$GNDVI))),
+                               rep(10,(length(data10$GNDVI))),
+                               rep(11,(length(data11$GNDVI))),
+                               rep(12,(length(data12$GNDVI)))),
+                     GNDVI = c(data1$GNDVI,data2$GNDVI,data3$GNDVI,data4$GNDVI,
+                               data5$GNDVI,data6$GNDVI,data7$GNDVI,data8$GNDVI,
+                               data9$GNDVI,data10$GNDVI,data11$GNDVI,data12$GNDVI))
+names(df2019G) = c('month','GNDVI')
+df2020G = data.frame(month = c(rep(1,(length(data13$GNDVI))),
+                               rep(2,(length(data14$GNDVI))),
+                               rep(3,(length(data15$GNDVI))),
+                               rep(4,(length(data16$GNDVI))),
+                               rep(5,(length(data17$GNDVI))),
+                               rep(6,(length(data18$GNDVI))),
+                               rep(7,(length(data19$GNDVI))),
+                               rep(8,(length(data20$GNDVI))),
+                               rep(9,(length(data21$GNDVI))),
+                               rep(10,(length(data22$GNDVI))),
+                               rep(11,(length(data23$GNDVI))),
+                               rep(12,(length(data24$GNDVI)))),
+                     GNDVI = c(data13$GNDVI,data14$GNDVI,data15$GNDVI,data16$GNDVI,
+                               data17$GNDVI,data18$GNDVI,data19$GNDVI,data20$GNDVI,
+                               data21$GNDVI,data22$GNDVI,data23$GNDVI,data24$GNDVI))
+names(df2020G) = c('month','GNDVI')
+df2021G = data.frame(month = c(rep(1,(length(data25$GNDVI))),
+                               rep(2,(length(data26$GNDVI))),
+                               rep(3,(length(data27$GNDVI))),
+                               rep(4,(length(data28$GNDVI))),
+                               rep(5,(length(data29$GNDVI))),
+                               rep(6,(length(data30$GNDVI))),
+                               rep(7,(length(data31$GNDVI))),
+                               rep(8,(length(data32$GNDVI))),
+                               rep(9,(length(data33$GNDVI))),
+                               rep(10,(length(data34$GNDVI))),
+                               rep(11,(length(data35$GNDVI))),
+                               rep(12,(length(data36$GNDVI)))),
+                     GNDVI = c(data25$GNDVI,data26$GNDVI,data27$GNDVI,data28$GNDVI,
+                               data29$GNDVI,data30$GNDVI,data31$GNDVI,data32$GNDVI,
+                               data33$GNDVI,data34$GNDVI,data35$GNDVI,data36$GNDVI))
+names(df2021G) = c('month','GNDVI')
+
+df2019G = na.omit(df2019G)
+df2020G = na.omit(df2020G)
+df2021G = na.omit(df2021G)
+
+nrow(df2019G)
+nrow(df2020G)
+nrow(df2021G)
+
+dftotalG = rbind(df2019G,df2020G,df2021G)
+meanG = aggregate(GNDVI~month,data = dftotalG , mean)
+meanG$month2 = (meanG$month)^2
+regG = lm(GNDVI~month+month2,data = meanG)
+meanG$expect = regG$coefficients[1]+regG$coefficients[2]*meanG$month+regG$coefficients[3]*meanG$month2
+
+
+plot(df2019G$month,df2019G$GNDVI,type = 'p',ylim = c(-1,1),xlab = 'month',ylab = 'GNDVI',main = 'Scatter Diagram of Pasture Data',yaxt = 'n',col = 'green')
+points(df2020G$month,df2020G$GNDVI,col = 'red')
+points(df2021G$month,df2021G$GNDVI,col = 'blue')
+lines(meanG$month,meanG$GNDVI,col = 'black')
+lines(meanG$month,meanG$expect,col = 'orange')
+axis(1,1:12)
+axis(2,seq(-1,1,0.1),las = 1)
+text(8,0.9,'y = -0.25 + 0.162x - 0.012x^2')
+legend('bottomleft',legend = c('2019','2020','2021','mean','quadratic fit'),
+       col = c("green","red",'blue','black','orange'),lty = 1,cex = 0.8)
+
+##5-----------------------------------------------------------------------------------------------
+df1 = data.frame(date = c(rep('2019-01-01',length(data1$NDVI)),rep('2020-01-01',length(data13$NDVI)),rep('2021-01-01',length(data25$NDVI)),
+                          rep('2019-02-01',length(data2$NDVI)),rep('2020-02-01',length(data14$NDVI)),rep('2021-02-01',length(data26$NDVI)),
+                          rep('2019-03-01',length(data3$NDVI)),rep('2020-03-01',length(data15$NDVI)),rep('2021-03-01',length(data27$NDVI)),
+                          rep('2019-04-01',length(data4$NDVI)),rep('2020-04-01',length(data16$NDVI)),rep('2021-04-01',length(data28$NDVI)),
+                          rep('2019-05-01',length(data5$NDVI)),rep('2020-05-01',length(data17$NDVI)),rep('2021-05-01',length(data29$NDVI)),
+                          rep('2019-06-01',length(data6$NDVI)),rep('2020-06-01',length(data18$NDVI)),rep('2021-06-01',length(data30$NDVI)),
+                          rep('2019-07-01',length(data7$NDVI)),rep('2020-07-01',length(data19$NDVI)),rep('2021-07-01',length(data31$NDVI)),
+                          rep('2019-08-01',length(data8$NDVI)),rep('2020-08-01',length(data20$NDVI)),rep('2021-08-01',length(data32$NDVI)),
+                          rep('2019-09-01',length(data9$NDVI)),rep('2020-09-01',length(data21$NDVI)),rep('2021-09-01',length(data33$NDVI)),
+                          rep('2019-10-01',length(data10$NDVI)),rep('2020-10-01',length(data22$NDVI)),rep('2021-10-01',length(data34$NDVI)),
+                          rep('2019-11-01',length(data11$NDVI)),rep('2020-11-01',length(data23$NDVI)),rep('2021-11-01',length(data35$NDVI)),
+                          rep('2019-12-01',length(data12$NDVI)),rep('2020-12-01',length(data24$NDVI)),rep('2021-12-01',length(data36$NDVI))),
+                 NDVI = c(data1$NDVI,data13$NDVI,data25$NDVI,
+                          data2$NDVI,data14$NDVI,data26$NDVI,
+                          data3$NDVI,data15$NDVI,data27$NDVI,
+                          data4$NDVI,data16$NDVI,data28$NDVI,
+                          data5$NDVI,data17$NDVI,data29$NDVI,
+                          data6$NDVI,data18$NDVI,data30$NDVI,
+                          data7$NDVI,data19$NDVI,data31$NDVI,
+                          data8$NDVI,data20$NDVI,data32$NDVI,
+                          data9$NDVI,data21$NDVI,data33$NDVI,
+                          data10$NDVI,data22$NDVI,data34$NDVI,
+                          data11$NDVI,data23$NDVI,data35$NDVI,
+                          data12$NDVI,data24$NDVI,data36$NDVI))
+names(df1) = c('date','NDVI')
+df1 = na.omit(df1)
+df1$date = as.Date(df1$date)
+
+library(lubridate)
+
+plot(df1$date,df1$NDVI,type = 'p',xlab = 'year',ylab = 'NDVI',main = 'Scatter Diagram of Pasture Data',yaxt = 'n',col = 'green')
+points(subset(df1,year(date)==2020)$date,subset(df1,year(date)==2020)$NDVI,col = 'red')
+points(subset(df1,year(date)==2021)$date,subset(df1,year(date)==2021)$NDVI,col = 'blue')
+axis(1,1:12)
+axis(2,seq(-1,1,0.1),las = 1)
+
+
+
+##6-----------------------------------------------------------------------------------------------
+df2 = data.frame(date = c(rep('2019-01-01',length(data1$GNDVI)),rep('2020-01-01',length(data13$GNDVI)),rep('2021-01-01',length(data25$GNDVI)),
+                          rep('2019-02-01',length(data2$GNDVI)),rep('2020-02-01',length(data14$GNDVI)),rep('2021-02-01',length(data26$GNDVI)),
+                          rep('2019-03-01',length(data3$GNDVI)),rep('2020-03-01',length(data15$GNDVI)),rep('2021-03-01',length(data27$GNDVI)),
+                          rep('2019-04-01',length(data4$GNDVI)),rep('2020-04-01',length(data16$GNDVI)),rep('2021-04-01',length(data28$GNDVI)),
+                          rep('2019-05-01',length(data5$GNDVI)),rep('2020-05-01',length(data17$GNDVI)),rep('2021-05-01',length(data29$GNDVI)),
+                          rep('2019-06-01',length(data6$GNDVI)),rep('2020-06-01',length(data18$GNDVI)),rep('2021-06-01',length(data30$GNDVI)),
+                          rep('2019-07-01',length(data7$GNDVI)),rep('2020-07-01',length(data19$GNDVI)),rep('2021-07-01',length(data31$GNDVI)),
+                          rep('2019-08-01',length(data8$GNDVI)),rep('2020-08-01',length(data20$GNDVI)),rep('2021-08-01',length(data32$GNDVI)),
+                          rep('2019-09-01',length(data9$GNDVI)),rep('2020-09-01',length(data21$GNDVI)),rep('2021-09-01',length(data33$GNDVI)),
+                          rep('2019-10-01',length(data10$GNDVI)),rep('2020-10-01',length(data22$GNDVI)),rep('2021-10-01',length(data34$GNDVI)),
+                          rep('2019-11-01',length(data11$GNDVI)),rep('2020-11-01',length(data23$GNDVI)),rep('2021-11-01',length(data35$GNDVI)),
+                          rep('2019-12-01',length(data12$GNDVI)),rep('2020-12-01',length(data24$GNDVI)),rep('2021-12-01',length(data36$GNDVI))),
+                 GNDVI = c(data1$GNDVI,data13$GNDVI,data25$GNDVI,
+                          data2$GNDVI,data14$GNDVI,data26$GNDVI,
+                          data3$GNDVI,data15$GNDVI,data27$GNDVI,
+                          data4$GNDVI,data16$GNDVI,data28$GNDVI,
+                          data5$GNDVI,data17$GNDVI,data29$GNDVI,
+                          data6$GNDVI,data18$GNDVI,data30$GNDVI,
+                          data7$GNDVI,data19$GNDVI,data31$GNDVI,
+                          data8$GNDVI,data20$GNDVI,data32$GNDVI,
+                          data9$GNDVI,data21$GNDVI,data33$GNDVI,
+                          data10$GNDVI,data22$GNDVI,data34$GNDVI,
+                          data11$GNDVI,data23$GNDVI,data35$GNDVI,
+                          data12$GNDVI,data24$GNDVI,data36$GNDVI))
+names(df2) = c('date','GNDVI')
+df2 = na.omit(df2)
+df2$date = as.Date(df2$date)
+
+
+plot(df2$date,df2$GNDVI,type = 'p',xlab = 'year',ylab = 'GNDVI',main = 'Scatter Diagram of Pasture Data',yaxt = 'n',col = 'green')
+points(subset(df2,year(date)==2020)$date,subset(df2,year(date)==2020)$GNDVI,col = 'red')
+points(subset(df2,year(date)==2021)$date,subset(df2,year(date)==2021)$GNDVI,col = 'blue')
+axis(1,1:12)
+axis(2,seq(-1,1,0.1),las = 1)
